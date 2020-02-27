@@ -1,0 +1,27 @@
+{
+  "name": "electronapp",
+  "version": "1.0.0",
+  "description": "Small desktop app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DannyOppenheimer/Electron-App.git"
+  },
+  "keywords": [
+    "Electron"
+  ],
+  "author": "DannyOppenheimer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DannyOppenheimer/Electron-App/issues"
+  },
+  "homepage": "https://github.com/DannyOppenheimer/Electron-App#readme",
+  "dependencies": {
+    "electron": "^8.0.1",
+    "keypress": "^0.2.1",
+    "mousetrap": "^1.6.5"
+  }
+}

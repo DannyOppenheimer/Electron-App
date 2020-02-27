@@ -1,0 +1,10 @@
+#main_game_window {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+body {
+	overflow: hidden;
+	background-color: black;
+}
