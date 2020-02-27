@@ -88,10 +88,14 @@ class Rectangle {
 		this.height = height;
 	}
 	intersects(rect2) {
-		alert('bruh');
 		if (this.x < rect2.x + rect2.width && this.x + this.width > rect2.x && this.y < rect2.y + rect2.height && this.y + this.height > rect2.y) {
+			alert('yup');
 			return true;
 		}
 		return false;
+	}
+
+	intersectRect(r1, r2) {
+		return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
 	}
 }
