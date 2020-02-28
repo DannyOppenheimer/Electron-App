@@ -9,14 +9,13 @@ document.addEventListener('keyup', e => {
 
 document.addEventListener('DOMContentLoaded', () => {
 	let canvas = document.getElementById('main_game_window');
-	let player = new Player(0, 0);
+	let player = new Player(0, 0, 30, 50);
 
 	// start event tick
 	setInterval(() => {
 		let ctx = drawCanvas(canvas);
 		let floor = drawFloor(ctx, canvas);
-		drawPlayer(ctx, canvas, player);
-		player.collision(floor);
+		drawPlayer(ctx, canvas, player, floor);
 	}, 10);
 });
 
@@ -31,12 +30,12 @@ function drawCanvas(canvas) {
 
 function drawFloor(ctx, canvas) {
 	ctx.fillStyle = '#FF0000';
-	floorRect = new Rectangle(0, canvas.height, canvas.width, -100);
+	floorRect = new Rectangle(0, canvas.height, canvas.width, - 100);
 	ctx.fillRect(floorRect.x, floorRect.y, floorRect.width, floorRect.height);
 	return floorRect;
 }
 
-function drawPlayer(ctx, canvas, player) {
+function drawPlayer(ctx, canvas, player, floor) {
 	if (player.velY != -2) {
 		player.velY = 2;
 	}
@@ -53,10 +52,12 @@ function drawPlayer(ctx, canvas, player) {
 		player.hitbox.x++;
 	}
 
+	player.belowCoords(canvas.height - 100);
+
 	ctx.fillStyle = '#FFFFFF';
 	player.hitbox.x += player.velX;
 	player.hitbox.y += player.velY;
-	ctx.fillRect(player.hitbox.x, player.hitbox.y, 30, 50);
+	ctx.fillRect(player.hitbox.x, player.hitbox.y, player.hitbox.width, player.hitbox.height);
 }
 
 class Player {
@@ -71,6 +72,14 @@ class Player {
 		setTimeout(() => {
 			this.velY = 0;
 		}, 1000);
+	}
+
+	belowCoords(y) {
+		// alert("y " + y)
+		// alert("this y " + this.hitbox.y)
+		if(y < (this.hitbox.y + this.hitbox.height) ) {
+			this.velY = 0;
+		}
 	}
 
 	collision(rect) {
@@ -89,13 +98,8 @@ class Rectangle {
 	}
 	intersects(rect2) {
 		if (this.x < rect2.x + rect2.width && this.x + this.width > rect2.x && this.y < rect2.y + rect2.height && this.y + this.height > rect2.y) {
-			alert('yup');
 			return true;
 		}
 		return false;
-	}
-
-	intersectRect(r1, r2) {
-		return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
 	}
 }

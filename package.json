@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/DannyOppenheimer/Electron-App#readme",
   "dependencies": {
-    "electron": "^8.0.1",
     "keypress": "^0.2.1",
     "mousetrap": "^1.6.5"
   }
