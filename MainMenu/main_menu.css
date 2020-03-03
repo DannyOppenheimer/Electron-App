@@ -1,0 +1,19 @@
+body {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background-size: 10vw;
+  background-image: url("./background.png");
+}
+
+#title {
+  text-align: center;
+  font-size: 3em;
+}
+
+#single_player_button,
+#multiplayer_button,
+#settings_button,
+#exit_button {
+  display: block;
+  margin: auto;
+}

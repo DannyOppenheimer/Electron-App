@@ -1,38 +1,3 @@
-class Player {
-  constructor(x, y, width, height) {
-    this.hitbox = new Rectangle(x, y, width, height);
-    this.velY = 0;
-    this.velX = 0;
-    this.lastDirection = 1;
-    this.idle_frame = 0;
-
-    this.jumping;
-  }
-
-  jump() {
-    if (!this.jumping) {
-      this.jumping = true;
-      this.velY = -6;
-      setTimeout(() => {
-        this.velY = 0;
-      }, 1000);
-    }
-  }
-
-  belowCoords(y) {
-    if (y < this.hitbox.y + this.hitbox.height) {
-      return true;
-    }
-  }
-
-  collision(rect) {
-    if (this.hitbox.intersects(rect)) {
-      this.jumping = false;
-      this.velY = 0;
-    }
-  }
-}
-
 class Rectangle {
   constructor(x, y, width, height) {
     this.x = x;
@@ -94,6 +59,26 @@ class Obstacle {
   }
 }
 
+class Player extends Obstacle {
+  constructor(x, y, width, height) {
+    super(x, y, width, height);
+    this.lastDirection = 1;
+    this.idle_frame = 0;
+
+    this.jumping;
+  }
+
+  jump() {
+    if (!this.jumping) {
+      this.jumping = true;
+      this.velY = -6;
+      setTimeout(() => {
+        this.velY = 0;
+      }, 1000);
+    }
+  }
+}
+
 class GIF {
   /**
    * @param {string[]} frames - Frames in GIF
@@ -118,6 +103,9 @@ class GIF {
       this.onFrame = 0;
     }
     this.onFrame++;
+    if (this.onFrame > this.maxFrames) {
+      this.onFrame = 0;
+    }
     return this.frames[this.onFrame];
   }
 
@@ -161,7 +149,12 @@ function getState(object) {
     return "jumping";
   }
   if (object.velX != 0) {
-    return "running";
+    if (object.velX > 0) {
+      return ["running", "right"];
+    }
+    if (object.velX < 0) {
+      return ["running", "left"];
+    }
   }
   return "idle";
 }
@@ -197,4 +190,39 @@ function drawImage(ctx, img, x, y, width, height, deg, flip, flop, center) {
   ctx.drawImage(img, -width / 2, -height / 2, width, height);
 
   ctx.restore();
+}
+
+function mirrorImage(
+  ctx,
+  image,
+  x = 0,
+  y = 0,
+  horizontal = false,
+  vertical = false
+) {
+  ctx.save(); // save the current canvas state
+  ctx.setTransform(
+    horizontal ? -1 : 1,
+    0, // set the direction of x axis
+    0,
+    vertical ? -1 : 1, // set the direction of y axis
+    x + horizontal ? image.width : 0, // set the x origin
+    y + vertical ? image.height : 0 // set the y origin
+  );
+  ctx.drawImage(image, 0, 0);
+  ctx.restore(); // restore the state as it was when this function was called
+}
+
+function fixDpi() {
+  let style_height = +getComputedStyle(canvas)
+    .getPropertyValue("height")
+    .slice(0, -2);
+
+  let style_width = +getComputedStyle(canvas)
+    .getPropertyValue("width")
+    .slice(0, -2);
+
+  ctx.imageSmoothingEnabled = false;
+  canvas.setAttribute("height", style_height * dpi);
+  canvas.setAttribute("width", style_width * dpi);
 }

@@ -1,6 +1,7 @@
 const electron = require("electron");
 const url = require("url");
 const path = require("path");
+const { ipcMain } = require("electron");
 
 const { app, BrowserWindow } = electron;
 
@@ -13,8 +14,11 @@ app.on("ready", () => {
     height: 450,
     useContentSize: true,
     center: true,
-    resizable: false,
-    icon: path.join(__dirname, "icon.ico")
+    resizable: true,
+    icon: path.join(__dirname, "icon.ico"),
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
   mainWindow.removeMenu();
   mainWindow.loadURL(
@@ -24,7 +28,7 @@ app.on("ready", () => {
       slashes: true
     })
   );
-  // mainWindow.openDevTools();
+  mainWindow.openDevTools();
 
   // Maintian 16:9 aspect ratio
   let oldSize = 0;
@@ -42,4 +46,11 @@ app.on("ready", () => {
   mainWindow.on("maximize", () => {
     mainWindow.setFullScreen(true);
   });
+});
+
+ipcMain.on("asynchronous-message", (event, arg) => {
+  console.log(arg);
+
+  // Event emitter for sending asynchronous messages
+  event.sender.send("asynchronous-reply", "async pong");
 });

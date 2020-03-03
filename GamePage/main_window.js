@@ -4,7 +4,7 @@ var gravity = 0.2,
   friction = 0.1;
 let player = new Player(0, 0, 41, 40);
 var lastCalledTime, fps;
-var playerIdle, playerWalk;
+var playerIdle, playerWalkRight, playerWalkLeft, playerJump;
 var clouds = [];
 
 let canvas, ctx, dpi;
@@ -33,10 +33,26 @@ document.addEventListener("DOMContentLoaded", () => {
     player
   );
 
-  playerWalk = new GIF(
+  playerWalkLeft = new GIF(
     [
-      "./Storage/Images/Player/earth_walk_1.png",
-      "./Storage/Images/Player/earth_walk_2.png"
+      "./Storage/Images/Player/earth_walk_left_1.png",
+      "./Storage/Images/Player/earth_walk_left_2.png"
+    ],
+    player
+  );
+
+  playerWalkRight = new GIF(
+    [
+      "./Storage/Images/Player/earth_walk_right_1.png",
+      "./Storage/Images/Player/earth_walk_right_2.png"
+    ],
+    player
+  );
+
+  playerJump = new GIF(
+    [
+      "./Storage/Images/Player/earth_jump_1.png",
+      "./Storage/Images/Player/earth_jump_2.png"
     ],
     player
   );
@@ -125,51 +141,62 @@ function updatePlayer(player, floor) {
         playerIdle.frames[0],
         player.hitbox.x,
         player.hitbox.y,
-        player.hitbox.width * 1,
+        player.hitbox.width,
         player.hitbox.height
       );
     }
-  } else {
-    mirrorImage(ctx, playerWalk.frames[0], player.hitbox.x, player.hitbox.y, true, false);
+  } else if (getState(player)[0] == "running") {
+    if (getState(player)[1] == "left") {
+      try {
+        ctx.drawImage(
+          playerWalkLeft.frames[playerWalkLeft.onFrame],
+          player.hitbox.x,
+          player.hitbox.y,
+          player.hitbox.width,
+          player.hitbox.height
+        );
+      } catch (error) {
+        ctx.drawImage(
+          playerWalkLeft.frames[0],
+          player.hitbox.x,
+          player.hitbox.y,
+          player.hitbox.width,
+          player.hitbox.height
+        );
+      }
+    } else {
+      try {
+        ctx.drawImage(
+          playerWalkRight.frames[playerWalkRight.onFrame],
+          player.hitbox.x,
+          player.hitbox.y,
+          player.hitbox.width,
+          player.hitbox.height
+        );
+      } catch (error) {
+        ctx.drawImage(
+          playerWalkRight.frames[0],
+          player.hitbox.x,
+          player.hitbox.y,
+          player.hitbox.width,
+          player.hitbox.height
+        );
+      }
+    }
+  } else if (getState(player) == "jumping") {
+    ctx.restore();
+    ctx.drawImage(
+      playerJump.frames[1],
+      player.hitbox.x,
+      player.hitbox.y,
+      player.hitbox.width,
+      player.hitbox.height
+    );
   }
-}
-
-function fixDpi() {
-  let style_height = +getComputedStyle(canvas)
-    .getPropertyValue("height")
-    .slice(0, -2);
-
-  let style_width = +getComputedStyle(canvas)
-    .getPropertyValue("width")
-    .slice(0, -2);
-
-  ctx.imageSmoothingEnabled = false;
-  canvas.setAttribute("height", style_height * dpi);
-  canvas.setAttribute("width", style_width * dpi);
 }
 
 setInterval(() => {
   playerIdle.nextFrame();
-  playerWalk.nextFrame();
+  playerWalkLeft.nextFrame();
+  playerWalkRight.nextFrame();
 }, 250);
-
-function mirrorImage(
-  ctx,
-  image,
-  x = 0,
-  y = 0,
-  horizontal = false,
-  vertical = false
-) {
-  ctx.save(); // save the current canvas state
-  ctx.setTransform(
-    horizontal ? -1 : 1,
-    0, // set the direction of x axis
-    0,
-    vertical ? -1 : 1, // set the direction of y axis
-    x + horizontal ? image.width : 0, // set the x origin
-    y + vertical ? image.height : 0 // set the y origin
-  );
-  ctx.drawImage(image, 0, 0);
-  ctx.restore(); // restore the state as it was when this function was called
-}
