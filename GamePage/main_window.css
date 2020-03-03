@@ -1,0 +1,15 @@
+#main_game_window {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+canvas {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+body {
+  overflow: hidden;
+  background-color: burlywood;
+}
